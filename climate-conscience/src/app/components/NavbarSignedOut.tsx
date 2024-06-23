@@ -34,7 +34,7 @@ const NavbarSignedOut = () => {
             color={"#2F2B36"}
             px="2vw"
           >
-            Take the Servey
+            Take the Survey
           </Button>
           <Button
             as={Link}
@@ -52,23 +52,6 @@ const NavbarSignedOut = () => {
             px="2vw"
           >
             Climate Challenges
-          </Button>
-          <Button
-            as={Link}
-            href="/login"
-            fontFamily={"Lato-semibold"}
-            fontStyle={"regular"}
-            fontSize={"18"}
-            fontWeight={400}
-            variant={"link"}
-            _hover={{
-              textDecoration: "underline",
-              color: "#2F2B36",
-            }}
-            color={"#2F2B36"}
-            px="2vw"
-          >
-            About Us
           </Button>
         </Flex>
         <HStack spacing={8} alignItems={"center"}>
