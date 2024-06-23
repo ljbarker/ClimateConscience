@@ -32,8 +32,6 @@ const LoginPage = ({ updateState }: { updateState: any }) => {
     // Function to handle form submission
     const handleSubmit = async () => {
         console.log("submitting form");
-        console.log(username);
-        console.log(password);
 
         // Check if username or password fields are empty
         if (username === "" || password === "") {
@@ -51,8 +49,6 @@ const LoginPage = ({ updateState }: { updateState: any }) => {
                     // Update the state with the token and user information
                     localStorage.setItem("token", data.token);
                     console.log("Login successful!");
-                    // Navigate to the home page
-                    NextResponse.redirect("/");
                 } else {
                     // If login fails, set error messages and reset form fields
                     setErrorMessage("Incorrect username or password");

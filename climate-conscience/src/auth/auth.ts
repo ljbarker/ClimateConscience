@@ -1,37 +1,6 @@
-import jwt from "jsonwebtoken";
-import { randomBytes, scryptSync } from 'crypto';
-import { NextRequest, NextResponse } from "next/server";
-
-// Middleware to authenticate user using JWT
-export function authenticateUser(req: NextRequest, res: NextResponse, next: any) {
-    const authHeader = req.headers.get("authorization");
-    //Getting the 2nd part of the auth header (the token)
-    const token = authHeader && authHeader.split(" ")[1];
-
-    if (!token) {
-        console.log("No token received");
-        return NextResponse.json(
-            { error: "Unauthorized: No token received in Auth.js" },
-            { status: 401 },
-        )
-    } else {
-        jwt.verify(
-            token,
-            process.env.TOKEN_SECRET as jwt.Secret,
-            (error, decoded) => {
-                if (decoded) {
-                    next();
-                } else {
-                    console.log("JWT error:", error);
-                    return NextResponse.json(
-                        { error: "Unauthorized: Invalid token" },
-                        { status: 401 },
-                    );
-                }
-            },
-        );
-    }
-}
+import { NextResponse } from "next/server";
+import bycrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 // Controller function to handle user login
 export const loginUser = async (creds: { username: string, password: string }) => {
@@ -48,7 +17,6 @@ export const loginUser = async (creds: { username: string, password: string }) =
         );
     }
     const existingUser = await userRes.json();
-    console.log("Existing user:", existingUser);
 
     if (existingUser == null) {
         // invalid username
@@ -59,12 +27,10 @@ export const loginUser = async (creds: { username: string, password: string }) =
     } else {
         try {
             console.log("Comparing passwords");
-            console.log(creds.password, existingUser.password);
-            const matched = matchPassword(creds.password, existingUser.password);
+            const matched = await bycrypt.compare(creds.password, existingUser.password);
             console.log("Password matched:", matched);
             if (matched) {
                 const token = await generateAccessToken(creds.username);
-                console.log("Token generated:", token);
                 return NextResponse.json({ existingUser, token });
             } else {
                 // invalid password
@@ -72,18 +38,17 @@ export const loginUser = async (creds: { username: string, password: string }) =
                 return NextResponse.json("Unauthorized: Invalid password");
             }
         } catch (error) {
-            console.log("Failed to authenticate user");
+            console.log("Failed to authenticate user: ", error);
             return NextResponse.json("Unauthorized: Failed to authenticate user");
         }
     }
 };
 
-// Function to generate a JWT access token
 function generateAccessToken(username: any) {
     return new Promise((resolve, reject) => {
         jwt.sign(
             { username: username },
-            process.env.TOKEN_SECRET as jwt.Secret,
+            process.env.NEXT_PUBLIC_TOKEN_SECRET as jwt.Secret,
             { expiresIn: "1d" },
             (error: Error | null, token: string | undefined) => {
                 if (error) {
@@ -97,37 +62,3 @@ function generateAccessToken(username: any) {
         );
     });
 }
-
-export { generateAccessToken };
-
-// Pass the password string and get hashed password back
-// ( and store only the hashed string in your database)
-const encryptPassword = (password: string, salt: string) => {
-    return scryptSync(password, salt, 32).toString('hex');
-};
-
-/**
- * Hash password with random salt
- * @return {string} password hash followed by salt
- *  XXXX till 64 XXXX till 32
- *
- */
-export const hashPassword = (password: string): string => {
-    // Any random string here (ideally should be at least 16 bytes)
-    const salt = randomBytes(16).toString('hex');
-    return encryptPassword(password, salt) + salt;
-};
-
-// fetch the user from your db and then use this function
-
-/**
- * Match password against the stored hash
- */
-export const matchPassword = (password: string, hash: string): Boolean => {
-    // extract salt from the hashed string
-    // our hex password length is 32*2 = 64
-    const salt = hash.slice(64);
-    const originalPassHash = hash.slice(0, 64);
-    const currentPassHash = encryptPassword(password, salt);
-    return originalPassHash === currentPassHash;
-};

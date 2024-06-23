@@ -76,7 +76,6 @@ const SignupPage = ({
                     if (loginRes.status === 200) {
                         const loginData = await loginRes.json();
                         localStorage.setItem("token", loginData.token);
-                        NextResponse.redirect("/");
                     } else {
                         const loginErr = await loginRes.text();
                         console.log("Login failed:", loginErr);

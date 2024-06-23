@@ -64,7 +64,7 @@ const RadioCard = (props: any) => {
 }
 
 // SurveyQuestionGroup component
-const SurveyQuestionGroup = ({ questionKey, onChange }: {questionKey: any, onChange: any}) => {
+const SurveyQuestionGroup = ({ questionKey, onChange }: { questionKey: any, onChange: any }) => {
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: questionKey,
     onChange: onChange,
@@ -120,6 +120,7 @@ const Survey = () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
       body: JSON.stringify({
         responses
@@ -131,7 +132,7 @@ const Survey = () => {
   };
 
   return (
-    <Box 
+    <Box
       justifyContent={"center"}
       alignContent={"center"}
       textAlign={"center"}
@@ -144,14 +145,14 @@ const Survey = () => {
           <Text fontSize={"20px"} mb={"10px"}>
             {question}
           </Text>
-          <SurveyQuestionGroup 
-            questionKey={key} 
-            onChange={(value: any) => handleChange(key, value)} 
+          <SurveyQuestionGroup
+            questionKey={key}
+            onChange={(value: any) => handleChange(key, value)}
           />
         </Box>
       ))}
-      <Button 
-        onClick={handleSubmit} 
+      <Button
+        onClick={handleSubmit}
         fontFamily={"Lato-bold"}
         fontSize={"18"}
         bg={"#CCD0FC"}
