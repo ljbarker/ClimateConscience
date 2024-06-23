@@ -150,6 +150,9 @@ const SignupPage = ({
                             <Input
                                 type="text"
                                 borderColor="#216869"
+                                border={"1px solid #D5D5D7"}
+                                borderRadius={5}
+                                p={3}
                                 _hover={{ borderColor: "#49A078" }}
                                 onChange={(e) => setName(e.target.value)}
                                 value={fullName}
@@ -161,8 +164,10 @@ const SignupPage = ({
                         <Input
                             type="text"
                             borderColor="#216869"
+                            border={"1px solid #D5D5D7"}
+                            borderRadius={5}
+                            p={3}
                             _hover={{ borderColor: "#49A078" }}
-                            onChange={(e) => setUsername(e.target.value)}
                             onFocus={() => setUsernameError(false)} // Reset the background color on focus
                             value={username}
                             bg={usernameError ? "red.100" : "white"} // Change background color if there's an error
@@ -174,6 +179,9 @@ const SignupPage = ({
                             <Input
                                 type={showPassword ? "text" : "password"}
                                 borderColor="#216869"
+                                border={"1px solid #D5D5D7"}
+                                borderRadius={5}
+                                p={3}
                                 _hover={{ borderColor: "#49A078" }}
                                 onChange={(e) => setPassword(e.target.value)}
                                 value={password}
@@ -194,7 +202,9 @@ const SignupPage = ({
                             <Input
                                 type={showConfirmPassword ? "text" : "password"}
                                 borderColor="#216869"
-                                _hover={{ borderColor: "#49A078" }}
+                                border={"1px solid #D5D5D7"}
+                                borderRadius={5}
+                                p={3}                                _hover={{ borderColor: "#49A078" }}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                 value={confirmPassword}
                             />

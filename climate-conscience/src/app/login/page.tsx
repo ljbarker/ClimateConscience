@@ -115,6 +115,9 @@ const LoginPage = ({ updateState }: { updateState: any }) => {
                             type="text"
                             value={username}
                             borderColor="#216869"
+                            border={"1px solid #D5D5D7"}
+                            borderRadius={5}
+                            p={3}
                             _hover={{ borderColor: "#49A078" }}
                             onChange={(e) => {
                                 setUsername(e.target.value);
@@ -131,6 +134,9 @@ const LoginPage = ({ updateState }: { updateState: any }) => {
                                 type={showPassword ? "text" : "password"}
                                 value={password}
                                 borderColor="#216869"
+                                border={"1px solid #D5D5D7"}
+                                borderRadius={5}
+                                p={3}
                                 _hover={{ borderColor: "#49A078" }}
                                 onChange={(e) => {
                                     setPassword(e.target.value);
