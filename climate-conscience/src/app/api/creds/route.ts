@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateAccessToken, hashPassword, matchPassword } from '@/auth/auth';
+import bcrypt from 'bcryptjs';
 import connectDB from "../../../mongoClient/client";
-
-
+import jwt from "jsonwebtoken";
 
 export async function POST(request: NextRequest) {
     await connectDB();
@@ -20,7 +19,7 @@ export async function POST(request: NextRequest) {
     if (creds.mode === "login") {
         console.log("Logging in...");
         try {
-            userRes = await fetch(`${process.env.SITE_URL}/api/users`, {
+            userRes = await fetch(`http://localhost:3000/api/users`, {
                 method: "GET",
                 body: JSON.stringify(creds.username),
             });
@@ -32,7 +31,6 @@ export async function POST(request: NextRequest) {
             );
         }
         const existingUser = await userRes.json();
-        console.log("Existing user:", existingUser);
 
         if (existingUser == null) {
             // invalid username
@@ -43,8 +41,7 @@ export async function POST(request: NextRequest) {
         } else {
             try {
                 console.log("Comparing passwords");
-                console.log(creds.password, existingUser.password);
-                const matched = matchPassword(creds.password, existingUser.password);
+                const matched = await bcrypt.compare(creds.password, existingUser.password);
                 console.log("Password matched:", matched);
                 if (matched) {
                     const token = await generateAccessToken(creds.username);
@@ -62,9 +59,8 @@ export async function POST(request: NextRequest) {
         }
     } else if (creds.mode === "signup") {
         console.log("Signing up...");
-        console.log(`${process.env.SITE_URL}/api/users/${creds.username}`);
         try {
-            const existingUser = await fetch(`${process.env.SITE_URL}/api/users/${creds.username}`, {
+            const existingUser = await fetch(`http://localhost:3000/api/users/api/users/${creds.username}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -76,15 +72,20 @@ export async function POST(request: NextRequest) {
                     { status: 400 },
                 );
             }
-            let hashedPassword = hashPassword(creds.password);
-            const token = await generateAccessToken(creds.username);
+            let salt = await bcrypt.genSalt(10);
+            let hashedPassword = "";
+            let token: any;
+            if (salt) {
+                hashedPassword = await bcrypt.hash(creds.password, salt);
+                token = await generateAccessToken(creds.username);
+            }
+
             const newUser = {
                 username: creds.username,
                 password: hashedPassword,
                 name: creds.name,
             };
-            console.log("trying to post new user");
-            await fetch(`${process.env.SITE_URL}/api/users`, {
+            await fetch(`http://localhost:3000/api/users/${newUser.username}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -108,4 +109,24 @@ export async function POST(request: NextRequest) {
             }
         );
     }
+}
+
+// Function to generate a JWT access token
+export function generateAccessToken(username: any) {
+    return new Promise((resolve, reject) => {
+        jwt.sign(
+            { username: username },
+            process.env.NEXT_PUBLIC_TOKEN_SECRET as jwt.Secret,
+            { expiresIn: "1d" },
+            (error: Error | null, token: string | undefined) => {
+                if (error) {
+                    reject(error);
+                } else if (token) {
+                    resolve(token);
+                } else {
+                    reject(new Error("Token generation failed"));
+                }
+            },
+        );
+    });
 }
