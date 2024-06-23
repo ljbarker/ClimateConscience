@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import connectDB from "../../../mongoClient/client";
-import jwt from "jsonwebtoken";
+import { generateAccessToken } from "../../../auth/auth";
 
 export async function POST(request: NextRequest) {
     await connectDB();
@@ -109,24 +109,4 @@ export async function POST(request: NextRequest) {
             }
         );
     }
-}
-
-// Function to generate a JWT access token
-export function generateAccessToken(username: any) {
-    return new Promise((resolve, reject) => {
-        jwt.sign(
-            { username: username },
-            process.env.NEXT_PUBLIC_TOKEN_SECRET as jwt.Secret,
-            { expiresIn: "1d" },
-            (error: Error | null, token: string | undefined) => {
-                if (error) {
-                    reject(error);
-                } else if (token) {
-                    resolve(token);
-                } else {
-                    reject(new Error("Token generation failed"));
-                }
-            },
-        );
-    });
 }

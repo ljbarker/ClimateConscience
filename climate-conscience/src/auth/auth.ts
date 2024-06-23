@@ -44,7 +44,7 @@ export const loginUser = async (creds: { username: string, password: string }) =
     }
 };
 
-function generateAccessToken(username: any) {
+export function generateAccessToken(username: any) {
     return new Promise((resolve, reject) => {
         jwt.sign(
             { username: username },
