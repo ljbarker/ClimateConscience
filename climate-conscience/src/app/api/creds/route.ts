@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
     } else if (creds.mode === "signup") {
         console.log("Signing up...");
         try {
-            const existingUser = await fetch(`${process.env.SITE_URL}/api/users/api/users/${creds.username}`, {
+            const existingUser = await fetch(`${process.env.SITE_URL}/api/users/${creds.username}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
