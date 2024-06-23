@@ -1,5 +1,5 @@
 'use client';
-
+import { invokeLLM } from '../../lib/aws/bedrock_utils';
 import { useState } from 'react';
 import { HStack, Box, Text, useRadio, useRadioGroup, Button } from '@chakra-ui/react';
 
@@ -103,7 +103,9 @@ const Survey = () => {
     });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    const { text, stop_reason } = await invokeLLM(`How should I reduce my carbon footprint, if this is a survey of my current practices? The survey: ${responses}`);
+    console.log(text, stop_reason);
     console.log(responses); // You can replace this with your database submission logic
   };
 
