@@ -1,5 +1,4 @@
 "use client";
-
 import {
     Button,
     FormControl,
@@ -18,6 +17,7 @@ import { useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { loginUser } from "../../auth/auth";
 import { NextResponse } from "next/server";
+import earth from "../../../public/Climate_Conscience.jpeg";
 
 const SignupPage = ({
     stateVariable,
@@ -103,17 +103,27 @@ const SignupPage = ({
     };
 
     return (
+
         <Flex
-            align="center"
             justify="center"
-            minHeight="100vh"
-            width="100vw"
-            bg="#DCE1DE"
             p={4}
-            pt={{ base: "1rem", md: "0.5rem" }} // Reduced top padding to prevent overlap with navbar
+            pt={200}
         >
             <Box
-                p={8}
+                position="absolute"
+                top={0}
+                left={0}
+                right={0}
+                bottom={0}
+                bgImage={`url(${earth.src})`}
+                bgSize="cover"
+                bgPosition="center"
+                zIndex={-1}
+                filter="brightness(0.5)"
+                height={"100vh"}
+            />
+            <Box
+                p={30}
                 width={{ base: "full", sm: "md", lg: "lg" }}
                 borderWidth={1}
                 borderRadius={8}

@@ -1,5 +1,4 @@
 'use client';
-import { callLLM } from '../../lib/aws/bedrock_utils';
 import { useState } from 'react';
 import { HStack, Box, Text, useRadio, useRadioGroup, Button } from '@chakra-ui/react';
 
