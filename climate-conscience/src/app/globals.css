@@ -41,7 +41,7 @@ body {
 }
 
 @font-face {
-  font-family: 'Lato';
+  font-family: 'Lato-regular';
   src: url('../../public/Lato/Lato-Regular.ttf') format('truetype');
   font-size: medium;
   font-weight: normal;
@@ -49,7 +49,7 @@ body {
 }
 
 @font-face {
-  font-family: 'Lato';
+  font-family: 'Lato-bold';
   src: url('../../public/Lato/Lato-Bold.ttf') format('truetype');
   font-size: medium;
   font-weight: bold;

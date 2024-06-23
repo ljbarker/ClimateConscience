@@ -10,20 +10,28 @@ const NavbarSignedOut = () => {
         justify={"space-between"}
       >
         <Flex align="center" ml={2}>
-          <Text 
-            fontFamily={"Lato-semibold"}
-            fontSize="20" 
-            color={"#2F2B36"} 
-            ml={1}>
+        <Button
+            as={Link}
+            href="/"
+            fontFamily={"Lato-regular"}
+            fontSize={"20"}
+            fontWeight={400}
+            variant={"link"}
+            _hover={{
+              textDecoration: "none",
+              color: "#2F2B36",
+            }}
+            color={"#2F2B36"}
+            px="2vw"
+          >
             Climate Conscience
-          </Text>
+          </Button>
         </Flex>
         <Flex>
         <Button
             as={Link}
-            href="/login"
-            fontFamily={"Lato-semibold"}
-            fontStyle={"regular"}
+            href="/survey"
+            fontFamily={"Lato-regular"}
             fontSize={"18"}
             fontWeight={400}
             variant={"link"}
@@ -38,9 +46,8 @@ const NavbarSignedOut = () => {
           </Button>
           <Button
             as={Link}
-            href="/login"
-            fontFamily={"Lato-semibold"}
-            fontStyle={"regular"}
+            href="/challenges"
+            fontFamily={"Lato-regular"}
             fontSize={"18"}
             fontWeight={400}
             variant={"link"}
@@ -58,8 +65,7 @@ const NavbarSignedOut = () => {
           <Button
             as={Link}
             href="/login"
-            fontFamily={"Lato-semibold"}
-            fontStyle={"regular"}
+            fontFamily={"Lato-regular"}
             fontSize={"18"}
             fontWeight={400}
             variant={"link"}
@@ -74,10 +80,9 @@ const NavbarSignedOut = () => {
           <Button
             as={Link}
             href="/signup"
-            fontFamily={"Lato-semibold"}
-            fontStyle={"regular"}
+            fontFamily={"Lato-regular"}
             fontSize={"18"}
-            fontWeight={600}
+            fontWeight={400}
             color={"#2F2B36"}
             bg={"#CCD0FC"}
             borderRadius={100}
