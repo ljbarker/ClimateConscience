@@ -1,9 +1,25 @@
 import { Box, Text, Image, Button } from "@chakra-ui/react";
 import earth from "../../../public/Climate_Conscience.jpeg";
 
-const CompactChallenge = () => {
+const CompactChallenge = (
+  {
+    id,
+    title,
+    description,
+    emissionsSaved,
+    points
+  }:
+    {
+      id: string,
+      title: string,
+      description: string,
+      emissionsSaved: number,
+      points: number,
+    }
+) => {
   return (
     <Box
+      id={id}
       display={"flex"}
       flexDirection={"column"}
       justifyContent={"space-between"}
@@ -12,7 +28,7 @@ const CompactChallenge = () => {
       padding={"20px"}
       borderRadius={20}
     >
-      <Image src={earth.src} alt="Earth" maxH={250} maxW={388} borderRadius={10}/>
+      <Image src={earth.src} alt="Earth" maxH={250} maxW={388} borderRadius={10} />
       <Text
         fontFamily={"Lato-regular"}
         fontSize={"22"}
@@ -20,7 +36,7 @@ const CompactChallenge = () => {
         w={388}
         textAlign={"left"}
       >
-        Compact Challenge
+        {title}
       </Text>
       <Box
         display={"flex"}
@@ -60,7 +76,7 @@ const CompactChallenge = () => {
             fontSize={"17"}
             color={"#2F2B36"}
           >
-            Lowered emissions by 10k tons
+            Lowered emissions by {emissionsSaved} tons
           </Text>
         </Box>
       </Box>
@@ -72,7 +88,7 @@ const CompactChallenge = () => {
         w={388}
         textAlign={"left"}
       >
-        Describe this item here. Connected elements and pages will be automatically updated with your changes.
+        {description}
       </Text>
       <Button
         fontFamily={"Lato-semibold"}
@@ -85,12 +101,12 @@ const CompactChallenge = () => {
         }}
         color={"#2F2B36"}
         padding={"24px"}
-        maxW={"228px"}
+        maxW={"270px"}
         height={"40px"}
         px={"24px"}
         mt={"20px"}
       >
-        Join the Challenge
+        Join the Challenge! Earn {points} Points!
       </Button>
     </Box>
   );
