@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
-import { HStack, Box, Text, useRadio, useRadioGroup, Button } from '@chakra-ui/react';
+import { HStack, Box, Text, useRadio, useRadioGroup, Button, Spinner } from '@chakra-ui/react';
+import { set } from 'mongoose';
 
 // Define the survey questions and their labels
 const SurveyQuestions = {
@@ -94,6 +95,9 @@ const SurveyQuestionGroup = ({ questionKey, onChange }: {questionKey: any, onCha
 // Survey component
 const Survey = () => {
   const [responses, setResponses] = useState({});
+  const [summary, setSummary] = useState('');
+  const [loadTitle, setLoadTitle] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   const handleChange = (questionKey: any, value: any) => {
     setResponses({
@@ -103,8 +107,14 @@ const Survey = () => {
   };
 
   const handleSubmit = async () => {
+    setLoading(true);
+    setLoadTitle(true);
     console.log('Submitting survey responses');
     console.log(responses);
+
+    setTimeout(() => {
+      setLoadTitle(false);
+    }, 2000);
 
     const response = await fetch('/api/summary', {
       method: 'POST',
@@ -116,7 +126,8 @@ const Survey = () => {
       }),
     });
     const data = await response.json();
-    console.log(data.content[0].text);
+    setSummary(data.content[0].text);
+    setLoading(false);
   };
 
   return (
@@ -157,6 +168,41 @@ const Survey = () => {
       >
         Submit
       </Button>
+      <Box mt={"30px"} gap={48}>
+        {
+          loadTitle ? 
+          null
+          : 
+          <Box>
+            {
+              loading ? 
+              <Box>
+                <Text fontSize={"32px"} fontFamily={'Abril-Fatface'}>
+                  Thank you for completing the survey!
+                </Text>
+                <Spinner 
+                  thickness='2px'
+                  speed='0.65s'
+                  color='blue.500'
+                  size="l"
+                  margin={"40px"}
+                  h={60}
+                  w={60}
+                />
+              </Box>
+              :
+              <Box>
+                <Text fontSize={"32px"} fontFamily={'Abril-Fatface'}>
+                  Lets Checkout Your Personalized Climate Impact Summary
+                </Text>
+                <Text fontSize={"20px"} fontFamily={'Lato-regular'} padding={"24px"} px={100}>
+                  {summary}
+                </Text>
+              </Box>
+            }
+          </Box>
+        }
+      </Box>
     </Box>
   );
 }
