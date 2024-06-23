@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     if (creds.mode === "login") {
         console.log("Logging in...");
         try {
-            userRes = await fetch(`${process.env.SITE_URL}/api/users`, {
+            userRes = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/users`, {
                 method: "GET",
                 body: JSON.stringify(creds.username),
             });
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
     } else if (creds.mode === "signup") {
         console.log("Signing up...");
         try {
-            const existingUser = await fetch(`${process.env.SITE_URL}/api/users/${creds.username}`, {
+            const existingUser = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/users/${creds.username}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
                 password: hashedPassword,
                 name: creds.name,
             };
-            await fetch(`${process.env.SITE_URL}/api/users/${newUser.username}`, {
+            await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/users/${newUser.username}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
