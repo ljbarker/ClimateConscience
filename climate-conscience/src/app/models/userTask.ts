@@ -1,5 +1,4 @@
 import mongoose, { Schema } from 'mongoose';
-import Task from './task';
 
 export type UserTaskList = {
     username: string;
@@ -8,7 +7,7 @@ export type UserTaskList = {
 
 const UserTaskListSchema = new Schema<UserTaskList>({
     username: { type: String, required: true },
-    tasks: { type: [Task], required: true },
+    tasks: { type: [String], required: true },
 });
 
 const UserTaskListModel = mongoose.models["UserTaskList"] || mongoose.model('UserTaskList', UserTaskListSchema);
