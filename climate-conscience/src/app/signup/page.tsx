@@ -19,13 +19,7 @@ import { loginUser } from "../../auth/auth";
 import { NextResponse } from "next/server";
 import earth from "../../../public/Climate_Conscience.jpeg";
 
-const SignupPage = ({
-    stateVariable,
-    updateState,
-}: {
-    stateVariable: any;
-    updateState: any;
-}) => {
+const SignupPage = () => {
     // State variables for form inputs and other states
     const [fullName, setName] = useState("");
     const [username, setUsername] = useState("");
@@ -203,7 +197,7 @@ const SignupPage = ({
                                 borderColor="#216869"
                                 border={"1px solid #D5D5D7"}
                                 borderRadius={5}
-                                p={3}                                _hover={{ borderColor: "#49A078" }}
+                                p={3} _hover={{ borderColor: "#49A078" }}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                 value={confirmPassword}
                             />

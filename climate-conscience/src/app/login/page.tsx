@@ -20,7 +20,7 @@ import { NextResponse } from "next/server";
 import earth from "../../../public/Climate_Conscience.jpeg";
 
 // Define the LoginPage component with a prop for updating state
-const LoginPage = ({ updateState }: { updateState: any }) => {
+const LoginPage = () => {
     // State variables for username, password, and other form states
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
