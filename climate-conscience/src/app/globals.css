@@ -31,3 +31,27 @@ body {
     text-wrap: balance;
   }
 }
+
+@font-face {
+  font-family: 'Abril-Fatface';
+  src: url('../../public/AbrilFatface-Regular.ttf') format('truetype');
+  font-size: large;
+  font-weight: bold;
+  color: "#2F2B36";
+}
+
+@font-face {
+  font-family: 'Lato';
+  src: url('../../public/Lato/Lato-Regular.ttf') format('truetype');
+  font-size: medium;
+  font-weight: normal;
+  color: "#2F2B36";
+}
+
+@font-face {
+  font-family: 'Lato';
+  src: url('../../public/Lato/Lato-Bold.ttf') format('truetype');
+  font-size: medium;
+  font-weight: bold;
+  color: "#2F2B36";
+}
