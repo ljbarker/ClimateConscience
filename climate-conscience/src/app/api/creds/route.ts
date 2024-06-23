@@ -94,7 +94,6 @@ export async function POST(request: NextRequest) {
             });
             return NextResponse.json({ status: 201, token });
         } catch (error) {
-            console.log("Failed to create user: " + error);
             return NextResponse.json(
                 { error: "Failed to create user: " + error },
                 { status: 400 },
