@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 
-const url: string = process.env.NEXT_PUBLIC_MONGO_URL as string;
+const url: string = process.env.MONGODB_URI as string;
 let connection: typeof mongoose;
 
 /**
