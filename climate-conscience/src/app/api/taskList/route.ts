@@ -1,19 +1,12 @@
-import {
-    DynamoDBClient,
-    UpdateItemCommand,
-    ScanCommand,
-    DynamoDBClientConfig,
-    GetItemCommand
-} from '@aws-sdk/client-dynamodb';
 import { NextRequest, NextResponse } from 'next/server';
-import { client } from '../../../dynamo/client';
+import connectDB from '../../../mongoClient/client';
+import TaskListModel from '@/app/models/taskList';
 
 export async function GET(request: NextRequest, { params }: { params: { title: string } }) {
+    await connectDB();
     if (!params || !params.title) {
         try {
-            const data = await client.send(new ScanCommand({
-                TableName: process.env.TASK_LIST_TABLE,
-            }));
+            const data = await TaskListModel.find();
             return NextResponse.json(data);
         } catch {
             return NextResponse.json(
@@ -26,12 +19,7 @@ export async function GET(request: NextRequest, { params }: { params: { title: s
     }
 
     try {
-        const data = await client.send(new GetItemCommand({
-            TableName: process.env.TASK_LIST_TABLE,
-            Key: {
-                title: { S: params.title },
-            }
-        }));
+        const data = await TaskListModel.findOne({ title: params.title });
         return NextResponse.json(data);
     } catch {
         return NextResponse.json(
@@ -44,6 +32,7 @@ export async function GET(request: NextRequest, { params }: { params: { title: s
 }
 
 export async function PATCH(request: NextRequest) {
+    await connectDB();
     if (!request.body) {
         return NextResponse.json(
             { error: 'No task info provided' },
@@ -56,22 +45,14 @@ export async function PATCH(request: NextRequest) {
     const taskInfo = await request.json();
 
     try {
-        await client.send(new UpdateItemCommand({
-            TableName: process.env.TASK_LIST_TABLE,
-            Key: {
-                title: { S: taskInfo['title'] },
-            },
-            AttributeUpdates: {
-                numPeoplePursuing: {
-                    Action: 'PUT',
-                    Value: taskInfo['numPeoplePursuing'],
-                },
-                totalEmissionsSaved: {
-                    Action: 'PUT',
-                    Value: taskInfo['totalEmissionsSaved'],
-                },
-            },
-        }));
+        await TaskListModel.updateOne({ title: taskInfo.title },
+            {
+                title: taskInfo.title,
+                description: taskInfo.description,
+                emissionsSaved: taskInfo.emissionsSaved,
+                points: taskInfo.points,
+
+            });
         return NextResponse.json({ message: 'Task updated successfully' });
     } catch {
         return NextResponse.json(

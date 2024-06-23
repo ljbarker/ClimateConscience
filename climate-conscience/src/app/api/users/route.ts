@@ -1,16 +1,8 @@
-import {
-    DynamoDBClient,
-    PutItemCommand,
-    ScanCommand,
-    DynamoDBClientConfig,
-    UpdateItemCommand,
-    GetItemCommand
-} from '@aws-sdk/client-dynamodb';
 import { NextRequest, NextResponse } from 'next/server';
-import Achievements from '../../../lib/userData/Achievements';
-import { client } from '../../../dynamo/client';
+import User from '../../models/user';
 
 export async function GET(req: NextRequest, { params }: { params: { username: string } }) {
+    console.log(params + " getting a user by name");
     if (!params || !params.username) {
         return NextResponse.json(
             { error: 'No user info provided' },
@@ -19,17 +11,18 @@ export async function GET(req: NextRequest, { params }: { params: { username: st
             }
         );
     }
+    console.error(params);
     try {
-        const data = await client.send(new GetItemCommand({
-            TableName: process.env.USER_TABLE,
-            Key: { username: { S: params.username } },
-        }));
-        return NextResponse.json(data);
-    } catch {
+        const data = await User.find({ username: params.username });
+        console.log(data, "getdata");
+        return NextResponse.json(params);
+    } catch (error) {
+        console.error(error);
         return NextResponse.json(
-            { error: 'Failed to fetch user: ' },
+            { error: 'Failed to fetch user: ', message: params, },
             {
                 status: 500,
+
             }
         );
     }
@@ -45,22 +38,23 @@ export async function POST(request: NextRequest) {
         );
     }
     const userInfo = await request.json();
-
+    const existingUser = await User.findOne({ username: userInfo.username });
+    if (existingUser) {
+        return NextResponse.json(
+            { error: 'User already exists' },
+            {
+                status: 400,
+            }
+        );
+    }
+    const userToAdd = new User({ name: userInfo.name, username: userInfo.username, password: userInfo.password, totalEmissionsSaved: userInfo.totalEmissionsSaved, longestStreak: userInfo.longestStreak, tasks: userInfo.tasks });
+    console.log(userInfo + "about to create a user");
     try {
-        await client.send(new PutItemCommand({
-            TableName: process.env.USER_TABLE,
-            Item: {
-                username: { S: userInfo['username'] },
-                password: { S: userInfo['password'] },
-                name: { S: userInfo['name'] },
-                totalEmmisionsSaved: { N: '0' },
-                longestStreak: { N: '0' },
-                tasks: { L: [] },
-                achievements: { S: JSON.stringify(Achievements) },
-            },
-        }));
-        return NextResponse.json({ message: 'User created successfully' });
-    } catch {
+        const mongores = await userToAdd.save();
+        console.log(mongores);
+        return NextResponse.json({ result: mongores, message: 'User created successfully' });
+    } catch (error) {
+        console.error(error);
         return NextResponse.json(
             { error: 'Failed to create user' },
             {
@@ -83,31 +77,16 @@ export async function PATCH(request: NextRequest) {
     const userInfo = await request.json();
 
     try {
-        await client.send(new UpdateItemCommand({
-            TableName: process.env.USER_TABLE,
-            Key: {
-                username: { S: userInfo['username'] },
+        const mongoRes = await User.findOneAndUpdate({ username: userInfo.username },
+            {
+                $set: {
+                    totalEmissionsSaved: userInfo.totalEmissionsSaved,
+                    longestStreak: userInfo.longestStreak,
+                    tasks: userInfo.tasks
+                }
             },
-            AttributeUpdates: {
-                totalEmmisionsSaved: {
-                    Action: 'PUT',
-                    Value: userInfo['totalEmmisionsSaved'],
-                },
-                longestStreak: {
-                    Action: 'PUT',
-                    Value: userInfo['longestStreak'],
-                },
-                tasks: {
-                    Action: 'PUT',
-                    Value: userInfo['tasks'],
-                },
-                achievements: {
-                    Action: 'PUT',
-                    Value: userInfo['achievements'],
-                },
-            },
-        }));
-        return NextResponse.json({ message: 'User updated successfully' });
+            { new: true });
+        return NextResponse.json({ mongoRes, message: 'User updated successfully' });
     } catch {
         return NextResponse.json(
             { error: 'Failed to update user' },

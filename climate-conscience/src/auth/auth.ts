@@ -1,5 +1,5 @@
-import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { randomBytes, scryptSync } from 'crypto';
 import { NextRequest, NextResponse } from "next/server";
 
 // Middleware to authenticate user using JWT
@@ -11,7 +11,7 @@ export function authenticateUser(req: NextRequest, res: NextResponse, next: any)
     if (!token) {
         console.log("No token received");
         return NextResponse.json(
-            { error: "Unauthorized: No token received" },
+            { error: "Unauthorized: No token received in Auth.js" },
             { status: 401 },
         )
     } else {
@@ -34,13 +34,11 @@ export function authenticateUser(req: NextRequest, res: NextResponse, next: any)
 }
 
 // Controller function to handle user login
-export const loginUser = async (req: NextRequest, res: NextResponse) => {
-    const userInfo = await req.json(); // from form
+export const loginUser = async (creds: { username: string, password: string }) => {
     let userRes: Response;
     try {
-        userRes = await fetch("/api/users", {
+        userRes = await fetch(`/api/users/${creds.username}`, {
             method: "GET",
-            body: JSON.stringify(userInfo['username']),
         });
     } catch (error) {
         console.log("Failed to find user");
@@ -61,11 +59,11 @@ export const loginUser = async (req: NextRequest, res: NextResponse) => {
     } else {
         try {
             console.log("Comparing passwords");
-            console.log(userInfo['password'], existingUser.password);
-            const matched = await bcrypt.compare(userInfo['password'], existingUser.password);
+            console.log(creds.password, existingUser.password);
+            const matched = matchPassword(creds.password, existingUser.password);
             console.log("Password matched:", matched);
             if (matched) {
-                const token = await generateAccessToken(userInfo['username']);
+                const token = await generateAccessToken(creds.username);
                 console.log("Token generated:", token);
                 return NextResponse.json({ existingUser, token });
             } else {
@@ -101,3 +99,35 @@ function generateAccessToken(username: any) {
 }
 
 export { generateAccessToken };
+
+// Pass the password string and get hashed password back
+// ( and store only the hashed string in your database)
+const encryptPassword = (password: string, salt: string) => {
+    return scryptSync(password, salt, 32).toString('hex');
+};
+
+/**
+ * Hash password with random salt
+ * @return {string} password hash followed by salt
+ *  XXXX till 64 XXXX till 32
+ *
+ */
+export const hashPassword = (password: string): string => {
+    // Any random string here (ideally should be at least 16 bytes)
+    const salt = randomBytes(16).toString('hex');
+    return encryptPassword(password, salt) + salt;
+};
+
+// fetch the user from your db and then use this function
+
+/**
+ * Match password against the stored hash
+ */
+export const matchPassword = (password: string, hash: string): Boolean => {
+    // extract salt from the hashed string
+    // our hex password length is 32*2 = 64
+    const salt = hash.slice(64);
+    const originalPassHash = hash.slice(0, 64);
+    const currentPassHash = encryptPassword(password, salt);
+    return originalPassHash === currentPassHash;
+};
