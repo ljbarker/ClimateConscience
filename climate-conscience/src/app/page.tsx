@@ -5,7 +5,6 @@ import HomePage from "./homePage/page";
 export default function Home() {
   return (
     <ChakraProvider>
-      <NavbarSignedOut />
       <HomePage/>
     </ChakraProvider>
   );

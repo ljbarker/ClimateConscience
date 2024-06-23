@@ -3,7 +3,7 @@ import { Box, Flex, Text, Button, HStack } from "@chakra-ui/react";
 
 const NavbarSignedOut = () => {
     return (
-      <Box px={16} width="100vw">
+      <Box bg={"#FFFFFF"} px={16} width="100%">
       <Flex
         minH={"60px"}
         align={"center"}
@@ -61,7 +61,7 @@ const NavbarSignedOut = () => {
             Climate Challenges
           </Button>
         </Flex>
-        <HStack spacing={8} alignItems={"center"}>
+        <HStack spacing={"2vw"} alignItems={"center"} mr={"2vw"}>
           <Button
             as={Link}
             href="/login"
@@ -75,7 +75,7 @@ const NavbarSignedOut = () => {
             }}
             color={"#2F2B36"}
           >
-            Sign In
+            Login
           </Button>
           <Button
             as={Link}
@@ -90,6 +90,7 @@ const NavbarSignedOut = () => {
               bg: "#DCDEF7",
               color: "#2F2B36",
             }}
+            px={"12px"}
           >
             Sign Up
           </Button>
