@@ -1,8 +1,6 @@
 import {
     DynamoDBClient,
     PutItemCommand,
-    UpdateItemCommand,
-    DeleteItemCommand,
     ScanCommand,
     DynamoDBClientConfig,
     GetItemCommand

@@ -1,10 +1,9 @@
 import {
     DynamoDBClient,
     PutItemCommand,
-    UpdateItemCommand,
-    DeleteItemCommand,
     ScanCommand,
-    DynamoDBClientConfig
+    DynamoDBClientConfig,
+    UpdateItemCommand
 } from '@aws-sdk/client-dynamodb';
 import { NextRequest, NextResponse } from 'next/server';
 import Achievements from '../../../lib/userData/Achievements';
@@ -53,6 +52,45 @@ export async function POST(request: NextRequest) {
     } catch {
         return NextResponse.json(
             { error: 'Failed to create user' },
+            {
+                status: 400,
+            }
+        );
+    }
+}
+
+export async function PATCH(request: NextRequest) {
+    const userInfo = await request.json();
+
+    try {
+        await client.send(new UpdateItemCommand({
+            TableName: process.env.USER_TABLE,
+            Key: {
+                username: { S: userInfo['username'] },
+            },
+            AttributeUpdates: {
+                totalEmmisionsSaved: {
+                    Action: 'PUT',
+                    Value: userInfo['totalEmmisionsSaved'],
+                },
+                longestStreak: {
+                    Action: 'PUT',
+                    Value: userInfo['longestStreak'],
+                },
+                tasks: {
+                    Action: 'PUT',
+                    Value: userInfo['tasks'],
+                },
+                achievements: {
+                    Action: 'PUT',
+                    Value: userInfo['achievements'],
+                },
+            },
+        }));
+        return NextResponse.json({ message: 'User updated successfully' });
+    } catch {
+        return NextResponse.json(
+            { error: 'Failed to update user' },
             {
                 status: 400,
             }
