@@ -1,6 +1,8 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { NextRequest, NextResponse } from 'next/server';
 
+export const maxDuration = 60;
+
 export async function POST(req: NextRequest) {
   try {
     const key = process.env.NEXT_PUBLIC_ANTHROPIC_API_KEY
