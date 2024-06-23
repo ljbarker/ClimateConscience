@@ -3,28 +3,31 @@ import {
     PutItemCommand,
     ScanCommand,
     DynamoDBClientConfig,
-    UpdateItemCommand
+    UpdateItemCommand,
+    GetItemCommand
 } from '@aws-sdk/client-dynamodb';
 import { NextRequest, NextResponse } from 'next/server';
 import Achievements from '../../../lib/userData/Achievements';
+import { client } from '../../../dynamo/client';
 
-const client = new DynamoDBClient({
-    region: 'us-east-1',
-    credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
-    },
-} as DynamoDBClientConfig);
-
-export async function GET() {
+export async function GET(req: NextRequest, { params }: { params: { username: string } }) {
+    if (!params || !params.username) {
+        return NextResponse.json(
+            { error: 'No user info provided' },
+            {
+                status: 400,
+            }
+        );
+    }
     try {
-        const data = await client.send(new ScanCommand({
+        const data = await client.send(new GetItemCommand({
             TableName: process.env.USER_TABLE,
+            Key: { username: { S: params.username } },
         }));
         return NextResponse.json(data);
     } catch {
         return NextResponse.json(
-            { error: 'Failed to fetch users: ' },
+            { error: 'Failed to fetch user: ' },
             {
                 status: 500,
             }
@@ -33,6 +36,14 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+    if (!request.body) {
+        return NextResponse.json(
+            { error: 'No user info provided' },
+            {
+                status: 400,
+            }
+        );
+    }
     const userInfo = await request.json();
 
     try {
@@ -60,6 +71,15 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
+    if (!request.body) {
+        return NextResponse.json(
+            { error: 'No user info provided' },
+            {
+                status: 400,
+            }
+        );
+    }
+
     const userInfo = await request.json();
 
     try {

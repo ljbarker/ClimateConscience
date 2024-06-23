@@ -8,19 +8,10 @@ import {
     GetItemCommand
 } from '@aws-sdk/client-dynamodb';
 import { NextRequest, NextResponse } from 'next/server';
+import { client } from '../../../dynamo/client';
 
-const client = new DynamoDBClient({
-    region: 'us-east-1',
-    credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
-    },
-} as DynamoDBClientConfig);
-
-export async function GET(request: NextRequest) {
-    const userTaskInfo = await request.json();
-
-    if (!userTaskInfo['username']) {
+export async function GET(request: NextRequest, { params }: { params: { username: string, title: string } }) {
+    if (!params || params.username) {
         return NextResponse.json(
             { error: 'No username provided' },
             {
@@ -29,7 +20,7 @@ export async function GET(request: NextRequest) {
         );
     }
 
-    if (!userTaskInfo['title']) {
+    if (!params.title) {
         try {
             const data = await client.send(new ScanCommand({
                 TableName: process.env.TASK_LIST_TABLE,
@@ -49,8 +40,8 @@ export async function GET(request: NextRequest) {
         const data = await client.send(new GetItemCommand({
             TableName: process.env.TASK_LIST_TABLE,
             Key: {
-                title: { S: userTaskInfo['title'] },
-                username: { S: userTaskInfo['username'] },
+                title: { S: params.username },
+                username: { S: params.title },
             }
         }));
         return NextResponse.json(data);
@@ -65,6 +56,14 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
+    if (!request.body) {
+        return NextResponse.json(
+            { error: 'No task info provided' },
+            {
+                status: 400,
+            }
+        );
+    }
     const userTaskInfo = await request.json();
 
     try {
@@ -113,6 +112,15 @@ export async function PATCH(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+    if (!request.body) {
+        return NextResponse.json(
+            { error: 'No task info provided' },
+            {
+                status: 400,
+            }
+        );
+    }
+
     const userTaskInfo = await request.json();
 
     try {
@@ -141,6 +149,15 @@ export async function POST(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+    if (!request.body) {
+        return NextResponse.json(
+            { error: 'No task info provided' },
+            {
+                status: 400,
+            }
+        );
+    }
+
     const userTaskInfo = await request.json();
 
     try {
