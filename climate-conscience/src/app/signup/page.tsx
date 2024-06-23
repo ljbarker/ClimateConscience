@@ -64,6 +64,7 @@ const SignupPage = () => {
                     // If account creation is successful
                     data = await res.json();
                     console.log("Account created successfully!");
+                    alert("Account created successfully!");
 
                     // Automatically log in the user after account creation
                     const loginRes = await loginUser({ username, password });
@@ -162,6 +163,7 @@ const SignupPage = () => {
                             p={3}
                             _hover={{ borderColor: "#49A078" }}
                             onFocus={() => setUsernameError(false)} // Reset the background color on focus
+                            onChange={(e) => setUsername(e.target.value)}
                             value={username}
                             bg={usernameError ? "red.100" : "white"} // Change background color if there's an error
                         />

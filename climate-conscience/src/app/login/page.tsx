@@ -48,7 +48,7 @@ const LoginPage = () => {
 
                     // Update the state with the token and user information
                     localStorage.setItem("token", data.token);
-                    console.log("Login successful!");
+                    alert("Login successful!");
                 } else {
                     // If login fails, set error messages and reset form fields
                     setErrorMessage("Incorrect username or password");
