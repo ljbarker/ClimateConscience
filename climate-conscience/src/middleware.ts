@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const protectedRoutes = ["/users", "/challenges", "/profile", "/api/users", "/api/tasks", "/api/userTasks", "/api/taskList"];
+const protectedRoutes = ["/users", "/profile", "/api/users", "/api/tasks", "/api/userTasks", "/api/taskList"];
 
 
 export default function middleware(req: NextRequest) {
@@ -17,7 +17,7 @@ export default function middleware(req: NextRequest) {
         jwt.verify(
             token,
             process.env.TOKEN_SECRET as jwt.Secret,
-            (error, decoded) => {
+            (error: any, decoded: any) => {
                 if (decoded) {
                     isAuthenticated = true;
                 } else {
