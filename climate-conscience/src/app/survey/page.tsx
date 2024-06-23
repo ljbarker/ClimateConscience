@@ -1,5 +1,5 @@
 'use client';
-import { invokeLLM } from '../../lib/aws/bedrock_utils';
+import { callLLM } from '../../lib/aws/bedrock_utils';
 import { useState } from 'react';
 import { HStack, Box, Text, useRadio, useRadioGroup, Button } from '@chakra-ui/react';
 
@@ -104,9 +104,20 @@ const Survey = () => {
   };
 
   const handleSubmit = async () => {
-    const { text, stop_reason } = await invokeLLM(`How should I reduce my carbon footprint, if this is a survey of my current practices? The survey: ${responses}`);
-    console.log(text, stop_reason);
-    console.log(responses); // You can replace this with your database submission logic
+    console.log('Submitting survey responses');
+    console.log(responses);
+
+    const response = await fetch('/api/summary', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        responses
+      }),
+    });
+    const data = await response.json();
+    console.log(data.content[0].text);
   };
 
   return (
