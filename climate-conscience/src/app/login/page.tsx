@@ -17,6 +17,7 @@ import { useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { loginUser } from "../../auth/auth";
 import { NextResponse } from "next/server";
+import earth from "../../../public/Climate_Conscience.jpeg";
 
 // Define the LoginPage component with a prop for updating state
 const LoginPage = ({ updateState }: { updateState: any }) => {
@@ -69,15 +70,25 @@ const LoginPage = ({ updateState }: { updateState: any }) => {
 
     return (
         <Flex
-            align="center"
             justify="center"
-            p={{ base: 4, md: 0 }}
-            minHeight="100vh"
-            width="100vw"
-            bg="#DCE1DE"
+            p={4}
+            pt={200}
         >
             <Box
-                p={{ base: 4, md: 8 }}
+                position="absolute"
+                top={0}
+                left={0}
+                right={0}
+                bottom={0}
+                bgImage={`url(${earth.src})`}
+                bgSize="cover"
+                bgPosition="center"
+                zIndex={-1}
+                filter="brightness(0.5)"
+                height={"100vh"}
+            />
+            <Box
+                p={30}
                 width="full"
                 maxW={{ base: "90%", md: "md" }}
                 borderWidth={1}

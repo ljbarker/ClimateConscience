@@ -1,4 +1,5 @@
 import { Box, Grid, Text } from "@chakra-ui/react";
+import CompactChallenge from "../components/compactChallenge";
 
 const challengesPage = () => {  
   return (
@@ -23,18 +24,15 @@ const challengesPage = () => {
         templateColumns="repeat(3, 1fr)"
         gap={6}
         mt={"50px"}
+        justifyContent="center"
+        alignItems="center"
       >
-        <Box>
-          sad
-        </Box>
-
-        <Box>
-          sad
-        </Box>
-
-        <Box>
-          sad
-        </Box>
+        <CompactChallenge />
+        <CompactChallenge />
+        <CompactChallenge />
+        <CompactChallenge />
+        <CompactChallenge />
+        <CompactChallenge />
       </Grid>
     </Box>
   );

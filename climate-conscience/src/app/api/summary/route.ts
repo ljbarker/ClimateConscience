@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
       model: "claude-3-opus-20240229",
       max_tokens: 1000,
       temperature: 0,
-      system: "Respond as a polite assistant giving advice to users on how to improve their impact on the climate.",
+      system: "Respond as a polite assistant giving advice to users on how to improve their impact on the climate. If you must refer to yourself, please use the collective we",
       messages: [
         {
           "role": "user",
