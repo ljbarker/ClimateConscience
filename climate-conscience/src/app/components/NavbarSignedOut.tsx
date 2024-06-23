@@ -1,30 +1,37 @@
 import Link from "next/link";
-import { Box, Flex, Text, Button, HStack, Image } from "@chakra-ui/react";
-import { Lato } from "next/font/google";
+import { Box, Flex, Text, Button, HStack } from "@chakra-ui/react";
 
 const NavbarSignedOut = () => {
     return (
-      <Box bg={"#FFFFFF"} px={16} width="100vw">
+      <Box px={16} width="100vw">
       <Flex
         minH={"60px"}
         align={"center"}
         justify={"space-between"}
       >
         <Flex align="center" ml={2}>
-          <Text 
-            fontFamily={"Lato-semibold"}
-            fontSize="20" 
-            color={"#2F2B36"} 
-            ml={1}>
+        <Button
+            as={Link}
+            href="/"
+            fontFamily={"Lato-regular"}
+            fontSize={"20"}
+            fontWeight={400}
+            variant={"link"}
+            _hover={{
+              textDecoration: "none",
+              color: "#2F2B36",
+            }}
+            color={"#2F2B36"}
+            px="2vw"
+          >
             Climate Conscience
-          </Text>
+          </Button>
         </Flex>
         <Flex>
         <Button
             as={Link}
-            href="/login"
-            fontFamily={"Lato-semibold"}
-            fontStyle={"regular"}
+            href="/survey"
+            fontFamily={"Lato-regular"}
             fontSize={"18"}
             fontWeight={400}
             variant={"link"}
@@ -35,13 +42,12 @@ const NavbarSignedOut = () => {
             color={"#2F2B36"}
             px="2vw"
           >
-            Take the Servey
+            Take the Survey
           </Button>
           <Button
             as={Link}
-            href="/login"
-            fontFamily={"Lato-semibold"}
-            fontStyle={"regular"}
+            href="/challenges"
+            fontFamily={"Lato-regular"}
             fontSize={"18"}
             fontWeight={400}
             variant={"link"}
@@ -54,30 +60,12 @@ const NavbarSignedOut = () => {
           >
             Climate Challenges
           </Button>
-          <Button
-            as={Link}
-            href="/login"
-            fontFamily={"Lato-semibold"}
-            fontStyle={"regular"}
-            fontSize={"18"}
-            fontWeight={400}
-            variant={"link"}
-            _hover={{
-              textDecoration: "underline",
-              color: "#2F2B36",
-            }}
-            color={"#2F2B36"}
-            px="2vw"
-          >
-            About Us
-          </Button>
         </Flex>
         <HStack spacing={8} alignItems={"center"}>
           <Button
             as={Link}
             href="/login"
-            fontFamily={"Lato-semibold"}
-            fontStyle={"regular"}
+            fontFamily={"Lato-regular"}
             fontSize={"18"}
             fontWeight={400}
             variant={"link"}
@@ -92,10 +80,9 @@ const NavbarSignedOut = () => {
           <Button
             as={Link}
             href="/signup"
-            fontFamily={"Lato-semibold"}
-            fontStyle={"regular"}
+            fontFamily={"Lato-regular"}
             fontSize={"18"}
-            fontWeight={600}
+            fontWeight={400}
             color={"#2F2B36"}
             bg={"#CCD0FC"}
             borderRadius={100}
