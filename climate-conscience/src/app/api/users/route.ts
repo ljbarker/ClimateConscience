@@ -47,7 +47,6 @@ export async function POST(request: NextRequest) {
                 longestStreak: { N: '0' },
                 tasks: { L: [] },
                 achievements: { S: JSON.stringify(Achievements) },
-                surveyResults: { S: userInfo['surveyResults'] },
             },
         }));
         return NextResponse.json({ message: 'User created successfully' });
