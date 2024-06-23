@@ -1,10 +1,9 @@
 import Link from "next/link";
-import { Box, Flex, Text, Button, HStack, Image } from "@chakra-ui/react";
-import { Lato } from "next/font/google";
+import { Box, Flex, Text, Button, HStack } from "@chakra-ui/react";
 
 const NavbarSignedOut = () => {
     return (
-      <Box bg={"#FFFFFF"} px={16} width="100vw">
+      <Box px={16} width="100vw">
       <Flex
         minH={"60px"}
         align={"center"}

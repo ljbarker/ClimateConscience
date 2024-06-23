@@ -1,6 +1,6 @@
 import NavbarSignedOut from "./components/NavbarSignedOut";
 import { ChakraProvider } from "@chakra-ui/react";
-import HomePage from "./pages/home";
+import HomePage from "./homePage/page";
 
 export default function Home() {
   return (
