@@ -5,7 +5,7 @@ export type TaskList = {
 }
 
 const TaskListSchema = new Schema<TaskList>({
-    tasks: { type: [], required: true },
+    tasks: { type: [String], required: true },
 });
 
 const TaskListModel = mongoose.models["TaskList"] || mongoose.model('TaskList', TaskListSchema);
