@@ -1,44 +1,26 @@
 import {
-    DynamoDBClient,
     PutItemCommand,
     ScanCommand,
-    DynamoDBClientConfig,
     GetItemCommand
 } from '@aws-sdk/client-dynamodb';
 import { NextRequest, NextResponse } from 'next/server';
+import { client } from '../../../dynamo/client';
 
-const client = new DynamoDBClient({
-    region: 'us-east-1',
-    credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
-    },
-} as DynamoDBClientConfig);
-
-export async function GET(request: NextRequest) {
-    const surveyInfo = await request.json();
-
-    if (!surveyInfo['usernameDate']) {
-        try {
-            const data = await client.send(new ScanCommand({
-                TableName: process.env.SURVEY_TABLE,
-            }));
-            return NextResponse.json(data);
-        } catch {
-            return NextResponse.json(
-                { error: 'Failed to fetch surveys: ' },
-                {
-                    status: 500,
-                }
-            );
-        }
+export async function GET(request: NextRequest, { params }: { params: { usernameDate: string } }) {
+    if (!params || !params.usernameDate) {
+        return NextResponse.json(
+            { error: 'No survey info provided' },
+            {
+                status: 400,
+            }
+        );
     }
 
     try {
         const data = await client.send(new GetItemCommand({
             TableName: process.env.SURVEY_TABLE,
             Key: {
-                usernameDate: { S: surveyInfo['usernameDate'] },
+                usernameDate: { S: params.usernameDate },
             }
         }));
         return NextResponse.json(data);
@@ -53,6 +35,15 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+    if (!request.body) {
+        return NextResponse.json(
+            { error: 'No survey info provided' },
+            {
+                status: 400,
+            }
+        );
+    }
+
     const userSurveyInfo = await request.json();
 
     try {

@@ -6,19 +6,10 @@ import {
     GetItemCommand
 } from '@aws-sdk/client-dynamodb';
 import { NextRequest, NextResponse } from 'next/server';
+import { client } from '../../../dynamo/client';
 
-const client = new DynamoDBClient({
-    region: 'us-east-1',
-    credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
-    },
-} as DynamoDBClientConfig);
-
-export async function GET(request: NextRequest) {
-    const taskInfo = await request.json();
-
-    if (!taskInfo['title']) {
+export async function GET(request: NextRequest, { params }: { params: { title: string } }) {
+    if (!params || !params.title) {
         try {
             const data = await client.send(new ScanCommand({
                 TableName: process.env.TASK_LIST_TABLE,
@@ -38,7 +29,7 @@ export async function GET(request: NextRequest) {
         const data = await client.send(new GetItemCommand({
             TableName: process.env.TASK_LIST_TABLE,
             Key: {
-                title: { S: taskInfo['title'] },
+                title: { S: params.title },
             }
         }));
         return NextResponse.json(data);
@@ -53,6 +44,15 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
+    if (!request.body) {
+        return NextResponse.json(
+            { error: 'No task info provided' },
+            {
+                status: 400,
+            }
+        );
+    }
+
     const taskInfo = await request.json();
 
     try {
