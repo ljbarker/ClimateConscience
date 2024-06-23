@@ -193,7 +193,7 @@ const Survey = () => {
               :
               <Box>
                 <Text fontSize={"32px"} fontFamily={'Abril-Fatface'}>
-                  Lets Checkout Your Personalized Climate Impact Summary
+                  Your Personalized Climate Impact Summary
                 </Text>
                 <Text fontSize={"20px"} fontFamily={'Lato-regular'} padding={"24px"} px={100}>
                   {summary}
