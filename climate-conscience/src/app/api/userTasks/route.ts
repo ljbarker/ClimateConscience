@@ -1,16 +1,9 @@
-import {
-    DynamoDBClient,
-    PutItemCommand,
-    UpdateItemCommand,
-    DeleteItemCommand,
-    ScanCommand,
-    DynamoDBClientConfig,
-    GetItemCommand
-} from '@aws-sdk/client-dynamodb';
 import { NextRequest, NextResponse } from 'next/server';
-import { client } from '../../../dynamo/client';
+import connectDB from '../../../mongoClient/client';
+import UserTaskListModel from '@/app/models/userTask';
 
 export async function GET(request: NextRequest, { params }: { params: { username: string, title: string } }) {
+    await connectDB();
     if (!params || params.username) {
         return NextResponse.json(
             { error: 'No username provided' },
@@ -22,9 +15,7 @@ export async function GET(request: NextRequest, { params }: { params: { username
 
     if (!params.title) {
         try {
-            const data = await client.send(new ScanCommand({
-                TableName: process.env.TASK_LIST_TABLE,
-            }));
+            const data = await UserTaskListModel.find({ username: params.username });
             return NextResponse.json(data);
         } catch {
             return NextResponse.json(
@@ -37,13 +28,7 @@ export async function GET(request: NextRequest, { params }: { params: { username
     }
 
     try {
-        const data = await client.send(new GetItemCommand({
-            TableName: process.env.TASK_LIST_TABLE,
-            Key: {
-                title: { S: params.username },
-                username: { S: params.title },
-            }
-        }));
+        const data = await UserTaskListModel.findOne({ username: params.username, title: params.title });
         return NextResponse.json(data);
     } catch {
         return NextResponse.json(
@@ -56,6 +41,7 @@ export async function GET(request: NextRequest, { params }: { params: { username
 }
 
 export async function PATCH(request: NextRequest) {
+    await connectDB();
     if (!request.body) {
         return NextResponse.json(
             { error: 'No task info provided' },
@@ -67,39 +53,17 @@ export async function PATCH(request: NextRequest) {
     const userTaskInfo = await request.json();
 
     try {
-        await client.send(new UpdateItemCommand({
-            TableName: process.env.TASK_LIST_TABLE,
-            Key: {
-                title: { S: userTaskInfo['title'] },
-                username: { S: userTaskInfo['username'] },
-            },
-            AttributeUpdates: {
-                streak: {
-                    Action: 'PUT',
-                    Value: userTaskInfo['streak'],
-                },
-                maxStreak: {
-                    Action: 'PUT',
-                    Value: userTaskInfo['maxStreak'],
-                },
-                level: {
-                    Action: 'PUT',
-                    Value: userTaskInfo['level'],
-                },
-                goal: {
-                    Action: 'PUT',
-                    Value: userTaskInfo['goal'],
-                },
-                daysComplete: {
-                    Action: 'PUT',
-                    Value: userTaskInfo['daysComplete'],
-                },
-                taskEmissionsSaved: {
-                    Action: 'PUT',
-                    Value: userTaskInfo['totalEmissionsSaved'],
-                },
-            },
-        }));
+        await UserTaskListModel.findOneAndUpdate(
+            { username: userTaskInfo['username'], title: userTaskInfo['title'] },
+            {
+                streak: userTaskInfo['streak'],
+                maxStreak: userTaskInfo['maxStreak'],
+                level: userTaskInfo['level'],
+                goal: userTaskInfo['goal'],
+                daysComplete: userTaskInfo['daysComplete'],
+                taskEmissionsSaved: userTaskInfo['totalEmissionsSaved'],
+            }
+        );
         return NextResponse.json({ message: 'Task updated successfully' });
     } catch {
         return NextResponse.json(
@@ -112,6 +76,7 @@ export async function PATCH(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+    await connectDB();
     if (!request.body) {
         return NextResponse.json(
             { error: 'No task info provided' },
@@ -124,20 +89,18 @@ export async function POST(request: NextRequest) {
     const userTaskInfo = await request.json();
 
     try {
-        await client.send(new PutItemCommand({
-            TableName: process.env.TASK_LIST_TABLE,
-            Item: {
-                title: { S: userTaskInfo['title'] },
-                username: { S: userTaskInfo['username'] },
-                streak: { N: userTaskInfo['streak'] },
-                maxStreak: { N: userTaskInfo['maxStreak'] },
-                level: { N: userTaskInfo['level'] },
-                goal: { N: userTaskInfo['goal'] },
-                daysComplete: { N: userTaskInfo['daysComplete'] },
-                taskEmissionsSaved: { N: userTaskInfo['totalEmissionsSaved'] },
-            },
-        }));
-        return NextResponse.json({ message: 'Task added successfully' });
+        const TaskToAdd = new UserTaskListModel({
+            title: userTaskInfo['title'],
+            username: userTaskInfo['username'],
+            streak: userTaskInfo['streak'],
+            maxStreak: userTaskInfo['maxStreak'],
+            level: userTaskInfo['level'],
+            goal: userTaskInfo['goal'],
+            daysComplete: userTaskInfo['daysComplete'],
+            taskEmissionsSaved: userTaskInfo['totalEmissionsSaved'],
+        });
+        const taskRes = await TaskToAdd.save();
+        return NextResponse.json({ taskRes, message: 'Task added successfully' });
     } catch {
         return NextResponse.json(
             { error: 'Failed to add Task' },
@@ -149,6 +112,7 @@ export async function POST(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+    await connectDB();
     if (!request.body) {
         return NextResponse.json(
             { error: 'No task info provided' },
@@ -161,14 +125,8 @@ export async function DELETE(request: NextRequest) {
     const userTaskInfo = await request.json();
 
     try {
-        await client.send(new DeleteItemCommand({
-            TableName: process.env.TASK_LIST_TABLE,
-            Key: {
-                title: { S: userTaskInfo['title'] },
-                username: { S: userTaskInfo['username'] },
-            },
-        }));
-        return NextResponse.json({ message: 'Task deleted successfully' });
+        const taskRes = await UserTaskListModel.findOneAndDelete({ username: userTaskInfo['username'], title: userTaskInfo['title'] });
+        return NextResponse.json({ taskRes, message: 'Task deleted successfully' });
     } catch {
         return NextResponse.json(
             { error: 'Failed to delete Task' },
